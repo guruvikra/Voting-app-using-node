@@ -17,10 +17,12 @@ router.post('/signup',async(req,res)=>{
             id:response.id
         }
 
+        const userResponse = response.toObject(); // Convert Mongoose document to plain object
+        delete userResponse.password;
         const token=generateToken(payload)
-        console.log("token : ",token);
+        // console.log("token : ",token);
 
-        res.status(200).json({response:response,token:token})
+        res.status(200).json({response:userResponse,token:token})
 
     }
     catch(err){
@@ -115,8 +117,8 @@ router.put("/profile/resetpassword",jwtAuthMiddleware,async(req,res)=>{
 })
 
 router.post('/vote/:candidateId',jwtAuthMiddleware,async(req,res)=>{
-    candidateid=req.params.candidateId
-    userid=req.user.id
+    const candidateid=req.params.candidateId
+    const userid=req.user.id
 
     try {
         const candidate=await Candidate.findById(candidateid)
